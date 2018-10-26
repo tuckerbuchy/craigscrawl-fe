@@ -5,24 +5,26 @@ import { Map, TileLayer, GeoJSON, L } from 'react-leaflet'
 import vancouver from './vancouver'
 
 const position = [49.26, -123.1207]
-const doThing = () => {
-	console.log("WAT");
-}
 export default class MyMap extends Component {
+	clickFeature(event) {
+		const layer = event.target;
+		layer.setStyle({color: 'green'});
+	}
 	onEachFeature(feature, layer) {
-	  	const func = (e)=>{console.log("Click")};
+	  	console.log(layer);
+	  	layer.setStyle({color: 'purple'});
 	    
 	  	layer.on({
-	    	click: func
+	    	click: this.clickFeature
 	    });
 	  };
 	render() {
 	  return <Map
-	  		  // touchZoom={false}
-	  		  // minZoom={12}
-	  		  // maxZoom={12}
-	  		  // zoomControl={false}
-	  		  // scrollWheelZoom={false}
+	  		  touchZoom={false}
+	  		  minZoom={12}
+	  		  maxZoom={12}
+	  		  zoomControl={false}
+	  		  scrollWheelZoom={false}
 	          style={{height: "100vh"}}
 	          center={position}
 	          zoom={12} >
@@ -32,6 +34,7 @@ export default class MyMap extends Component {
 	          <GeoJSON 
 	            key={Math.random()}
 	          	data={vancouver} 
+	          	color='red'
                 onEachFeature={this.onEachFeature.bind(this)}
 	          	/>
 	        </Map>
