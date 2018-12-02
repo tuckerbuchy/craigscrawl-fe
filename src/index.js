@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import './styles/map.css';
-import vancouver from './vancouver'
+import vancouver from './vancouver';
+const { getListings } = require('./services/listings');
 
 // GLOBALS
 // TODO: Probably bad, its a global.
@@ -26,7 +27,18 @@ function onEachFeature(feature, layer) {
   });
 };
 
-function configureMap() {
+function addListingMarkers(listings, map) {
+  listings.forEach((l) => {
+    const lat = l['lat'];
+    const lon = l['lon'];
+    if (lat && lon){
+      const marker = L.marker([lat, lon]).addTo(map); 
+    }
+  });
+}
+
+function configureMap(listings) {
+
   const map = L.map('mapid', {
     zoomControl: false,
     zoom: ZOOM, 
@@ -46,7 +58,13 @@ function configureMap() {
   });
 
   geoJsonVan.addTo(map);
+  
+  addListingMarkers(listings, map)
+
+  return map;
 }
 
-configureMap();
+const listings = getListings();
+const listingsSub = listings.slice(0, 100);
+const map = configureMap(listingsSub);
 
