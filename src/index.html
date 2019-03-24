@@ -15,39 +15,51 @@
 					<div id="mapid"></div>
 				</div>
 				<div class="col-3">
-					<form id="explore-form">
+					<form>
 						<div class="form-group">
 							<label for="exampleFormControlSelect1">Rental Type</label>
-							<select class="form-control" id="exampleFormControlSelect1">
+							<select class="form-control" id="rental-type">
 								<option></option>
-								<option>Apartment</option>
-								<option>House</option>
-								<option>Condo</option>
-								<option>Townhouse</option>
+								<option>apartment</option>
+								<option>house</option>
+								<option>condo</option>
+								<option>townhouse</option>
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="formControlRange">Min Square Ft2</label>
-							<input type="range" class="form-control-range" id="formControlRange">
-							<label for="formControlRange">Max Square Ft2</label>
-							<input type="range" class="form-control-range" id="formControlRange">
+							<label for="example-number-input" class="col-form-label">Min Bdrms</label>
+							<input class="form-control" type="number" id="min-bedrooms">
+							<label for="example-number-input" class="col-form-label">Max Bdrms</label>
+							<input class="form-control" type="number" id="max-bedrooms">
+						</div>
+						<div class="form-group">
+							<label for="example-number-input" class="col-form-label">Min SqFt</label>
+							<input class="form-control" type="number" id="min-ft2">
+							<label for="example-number-input" class="col-form-label">Max SqFt</label>
+							<input class="form-control" type="number" id="max-ft2">
 						</div>
 						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-							<label class="form-check-label" for="defaultCheck1">
+							<input class="form-check-input" type="checkbox" id="dogs">
+							<label class="form-check-label" for="dogs">
 								Dogs Ok
 							</label>
 						</div>
 						<div class="form-check">
-							<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-							<label class="form-check-label" for="defaultCheck1">
+							<input class="form-check-input" type="checkbox" value="" id="cats">
+							<label class="form-check-label" for="cats">
 								Cats Ok
 							</label>
 						</div>
-						<button type="submit" class="btn btn-primary">Explore!</button>
 					</form>
+					<button id="explore-button" class="btn btn-primary">Explore!</button>
+					<button id="explore-button-spinner" class="btn btn-primary" type="button" disabled hidden="true">
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+					Loading...
+					</button>
 
-					Using x Listings to Visualize!
+					<div id="number-of-listings-container" hidden="true">
+						Using <span id="number-of-listings">N/A</span> rentals to make this map!
+					</div>
 				</div>
 			</div>
 		</div>
