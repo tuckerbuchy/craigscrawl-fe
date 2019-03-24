@@ -1,18 +1,19 @@
 import L from 'leaflet';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import * as heat from 'leaflet.heat'
 import * as d3 from "d3";
 import './styles/map.css';
 import vancouver from './vancouver';
 
-const { getListings, getListingsMeanRent } = require('./services/listings');
+
+const { getListings, getAverageRents } = require('./services/listings');
 
 // GLOBALS
-// TODO: Probably bad, its a global.
-var geoJsonVan = null;
+var geoJsonVan = {};
 const ZOOM = 12;
 
 function clickFeature(event) {
-  // Reset the style back to 'unselected'.
   geoJsonVan.eachLayer((layer) => {
     layer.setStyle({color: 'purple'});
   });
@@ -21,13 +22,32 @@ function clickFeature(event) {
   layer.setStyle({color: 'green'});
 }
 
-async function onEachFeature(feature, layer) {
-  const neighborhoodName = feature.properties.name;
+function getMaxRent(averageRents) {
+  return Math.max(...averageRents.map(x => x.AVERAGE_RENT));
+}
 
-  const rent = await getListingsMeanRent(neighborhoodName);
+function getAverageRent(neighborhoodName) {
+  return averageRents.find(x => {
+    return x['neighborhood'] == neighborhoodName;
+  }).AVERAGE_RENT;
+}
+
+function updateGeojsonFeatures() {
+  // const maxRent = getMaxRent(averageRents);
+  console.log(geoJsonVan);
+
+  Object.values(geoJsonVan._layers).forEach((layer) => {
+    layer.setStyle({color: 'blue'});
+  })
+  return false;
+}
+
+function onEachFeature(feature, layer) {
+  const neighborhoodName = feature.properties.name;
+  const rent = 0;
 
   layer.setStyle({color: 'purple'});
-  layer.bindPopup(`<h1> ${feature.properties.name} </h1> avg rent: ${rent}`);
+  layer.bindPopup(`<h5> ${feature.properties.name} </h5> avg rent: ${rent}`);
   
   layer.on({
     click: clickFeature
@@ -47,12 +67,16 @@ function addListingMarkers(listings, map) {
   });
 }
 
-function configureMap(listings) {
+function configureMap(listingsInfo) {
+  // let listings = listingsInfo.listings;
+  // TODO: note this is a global..
+  // averageRents = listingsInfo.averageRents;
+
   const map = L.map('mapid', {
     zoomControl: true,
     zoom: ZOOM, 
     minZoom: ZOOM, 
-    // maxZoom: ZOOM,
+    maxZoom: ZOOM,
     scrollWheelZoom: true,
     touchZoom: true,
 
@@ -64,7 +88,7 @@ function configureMap(listings) {
 
   // getHeatLayer(listings).addTo(map);
   getGeoJsonLayer().addTo(map);
-  addListingMarkers(listings, map)
+  // addListingMarkers(listings, map)
 
   return map;
 }
@@ -81,9 +105,10 @@ function getHeatLayer(listings) {
 }
 
 function getGeoJsonLayer() {
-  return L.geoJSON(vancouver,  {
+  geoJsonVan = L.geoJSON(vancouver,  {
       onEachFeature: onEachFeature
   });
+  return geoJsonVan;
 }
 
 function removeListingOutliers(listings) {
@@ -93,4 +118,16 @@ function removeListingOutliers(listings) {
   return sortedListings.slice(low,high);
 }
 
-getListings().then(configureMap);
+async function getListingInformation() {
+  // let average = await getAverageRents();
+  return {
+    averageRents: {}//average
+  }
+}
+
+function setUpExploreForm() {
+  document.querySelector('#explore-form').addEventListener('submit', updateGeojsonFeatures);
+}
+
+setUpExploreForm();
+getListingInformation().then(configureMap);
